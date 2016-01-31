@@ -1,0 +1,16 @@
+﻿  stdafx.cpp
+  Homework01.cpp
+Homework01.cpp(65): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+Homework01.cpp(66): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+Homework01.cpp(67): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+Homework01.cpp(68): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Generating code
+  5 of 5 functions (100.0%) were compiled, the rest were copied from previous compilation.
+    4 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Homework01.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\Release\Homework01.exe
+  C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\FreeGLUT3.0.0-2\bin\freeglut.dll
+          1 file(s) copied.
+  C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\GLEW1.13.0\bin\Release\Win32\glew32.dll
+          1 file(s) copied.
