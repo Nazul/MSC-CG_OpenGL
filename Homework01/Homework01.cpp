@@ -10,7 +10,9 @@
 #include "stdafx.h"
 #include "GL\glew.h"
 #include "GL\glut.h"
+#include "GL\\freeglut.h"
 #include <math.h>
+#include <string>
 #ifdef _DEBUG
 #include <iostream>
 #endif
@@ -23,6 +25,8 @@
 #define X 0
 #define Y 1
 #define Z 2
+#define WINDOW_WIDTH 480
+#define WINDOW_HEIGHT 480
 
 float angle = 0.0;
 
@@ -82,16 +86,42 @@ void animateScene(int value) {
   glutPostRedisplay();
 }
 
+void keyHandler(unsigned char key, int x, int y) {
+  if (key == 27) {
+    glutLeaveMainLoop();
+  }
+}
+
 int main(int argc, char **argv) {
+  bool gameMode = false;
+  int startX = 300, startY = 300;
+
   // Init GLUT and create Window
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-  glutInitWindowPosition(100, 100);
-  glutInitWindowSize(480, 480);
-  glutCreateWindow("MSC GC 705080 - Homework 01");
+
+  if (argc > 1) {
+    if (std::string(argv[1]) == "-game") {
+      glutGameModeString("1024x768:32");
+      if (glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)) {
+        gameMode = true;
+        glutEnterGameMode();
+      }
+    }
+    if (std::string(argv[1]) == "-center") {
+      startX = glutGet(GLUT_SCREEN_WIDTH) / 2 - WINDOW_WIDTH / 2;
+      startY = glutGet(GLUT_SCREEN_HEIGHT) / 2 - WINDOW_HEIGHT / 2;
+    }
+  }
+  if (!gameMode) {
+    glutInitWindowPosition(startX, startY);
+    glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    glutCreateWindow("MSC GC 705080 - Homework 01");
+  }
 
   // Register callbacks
   glutDisplayFunc(renderScene);
+  glutKeyboardFunc(keyHandler);
   glutTimerFunc(REFRESH_MILISECS, animateScene, 0);
 
   // Enter GLUT event processing cycle

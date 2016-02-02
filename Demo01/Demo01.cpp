@@ -11,6 +11,7 @@
 #include "stdafx.h"
 #include "GL\glew.h"
 #include "GL\glut.h"
+#include "GL\freeglut.h"
 #include <math.h>
 
 
@@ -46,6 +47,12 @@ void renderScene(void) {
   glutSwapBuffers();
 }
 
+void keyHandler(unsigned char key, int x, int y) {
+  if(key == 27) {
+    glutLeaveMainLoop();
+  }
+}
+
 int main(int argc, char **argv) {
 
   // init GLUT and create Window
@@ -57,6 +64,7 @@ int main(int argc, char **argv) {
 
   // register callbacks
   glutDisplayFunc(renderScene);
+  glutKeyboardFunc(keyHandler);
 
   // enter GLUT event processing cycle
   glEnable(GL_DEPTH_TEST);

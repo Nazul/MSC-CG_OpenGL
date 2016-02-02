@@ -1,12 +1,7 @@
-﻿  Homework01.cpp
-Homework01.cpp(65): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Homework01.cpp(66): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Homework01.cpp(67): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Homework01.cpp(68): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+﻿  stdafx.cpp
+  Homework01.cpp
   Generating code
-  3 of 5 functions (60.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  All 74 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   Homework01.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\x64\Release\Homework01.exe
   C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\FreeGLUT3.0.0-2\bin\x64\freeglut.dll
