@@ -1,3 +1,11 @@
+//**********************************************************
+// ITESO - Master's Degree in Computer Systems
+// Computer Graphics
+// Demo 02 - First 3D object (and custom Matrix & Vector library)
+//
+// Mario Contreras (705080)
+//
+//*********************************************************
 #pragma once
 
 struct VECTOR4D {
@@ -26,16 +34,16 @@ struct MATRIX4D {
   };
 };
 
-MATRIX4D operator*(MATRIX4D& A, MATRIX4D &B);
-VECTOR4D operator*(MATRIX4D& A, VECTOR4D& V);
-VECTOR4D operator*(VECTOR4D& V, MATRIX4D& A);
-VECTOR4D operator*(VECTOR4D& A, VECTOR4D& B);
-VECTOR4D operator-(VECTOR4D& A, VECTOR4D &B);
-VECTOR4D operator+(VECTOR4D& A, VECTOR4D &B);
-VECTOR4D Cross3(VECTOR4D&A, VECTOR4D &B);
-float    Dot(VECTOR4D& A, VECTOR4D& B);
-float    Magnity(VECTOR4D& A);
-VECTOR4D Normalize(VECTOR4D& A);
+MATRIX4D operator*(MATRIX4D &A, MATRIX4D &B);
+VECTOR4D operator*(MATRIX4D &A, VECTOR4D &V);
+VECTOR4D operator*(VECTOR4D &V, MATRIX4D &A);
+VECTOR4D operator*(VECTOR4D &A, VECTOR4D &B);
+VECTOR4D operator-(VECTOR4D &A, VECTOR4D &B);
+VECTOR4D operator+(VECTOR4D &A, VECTOR4D &B);
+VECTOR4D Cross3(VECTOR4D& A, VECTOR4D& B);
+float Dot(VECTOR4D &A, VECTOR4D &B);
+float Magnity(VECTOR4D &A);
+VECTOR4D Normalize(VECTOR4D &A);
 MATRIX4D Zero();
 MATRIX4D Identity();
 MATRIX4D RotationX(float theta);
@@ -43,7 +51,7 @@ MATRIX4D RotationY(float theta);
 MATRIX4D RotationZ(float theta);
 MATRIX4D Translation(float dx, float dy, float dz);
 MATRIX4D Scaling(float sx, float sy, float sz);
-MATRIX4D View(VECTOR4D& EyePos,
-  VECTOR4D& Target, VECTOR4D& Up);
+MATRIX4D View(VECTOR4D &EyePos, VECTOR4D &Target, VECTOR4D &Up);
+MATRIX4D PerspectiveWidthHeightLH(int nWidth, int nHeight, float zNear, float zFar);
 
 // EOF

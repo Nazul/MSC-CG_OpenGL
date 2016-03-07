@@ -11,7 +11,7 @@
 #include "GL\glut.h"
 #include "Matrix4D.h"
 #include <math.h>
-#include "GL\\freeglut.h"
+#include "GL\freeglut.h"
 #include <string>
 #ifdef _DEBUG
 #include <iostream>
@@ -20,14 +20,9 @@
 #define REFRESH_MILISECS 100
 #define WINDOW_WIDTH 480
 #define WINDOW_HEIGHT 480
+#define INCREMENT 0.01f
 
-bool rotateX, rotateY, rotateZ = false;
-
-VECTOR4D Triangle[3] = {
-  {  0,  1, 0, 1 },
-  {  1, -1, 0, 1 },
-  { -1, -1, 0, 1 }
-};
+bool rotateX, rotateY, rotateZ, scaleUp, scaleDown = false;
 
 VECTOR4D Pyramid[4] = {
   {  0,  1, 0, 1 },
@@ -50,53 +45,55 @@ int PyramidIndices[] = {
   0, 3, 1
 };
 
-float angle = 0.0f;
-
+MATRIX4D T;
 MATRIX4D R;
 
-void renderScene(void) {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+void renderScene(void) {
   int sx = glutGet(GLUT_WINDOW_WIDTH);
   int sy = glutGet(GLUT_WINDOW_HEIGHT);
   MATRIX4D SAspect = Scaling((float)sy / sx, 1, 1);
-  VECTOR4D Target = { 0.0f, 0.0f, 0.0f, 1.0f };
-  VECTOR4D Eye = { 0.2f, 0.2f, 0.2f, 1.0f };
-  VECTOR4D Up = { 0.0f, 0.0f, 1.0f, 0.0f };
-  MATRIX4D Vi = View(Eye, Target, Up);
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glBegin(GL_TRIANGLES);
-
-  //for (int i = 0; i < sizeof(Triangle) / sizeof(VECTOR4D); i++) {
-  //  glColor4f(Colors[i].r, Colors[i].g, Colors[i].b, Colors[i].a);
-  //  VECTOR4D V = SAspect * Vi * R * Scaling(0.25f, 0.25f, 0.25f) * Triangle[i];
-  //  glVertex4f(V.x, V.y, V.z, V.w);
-  //}
-
   for (int i = 0; i < sizeof(PyramidIndices) / sizeof(int); i += 3) {
     for (int j = 0; j < 3; j++) {
-      glColor4f(Colors[PyramidIndices[i + j]].r, Colors[PyramidIndices[i + j]].g, Colors[PyramidIndices[i + j]].b, Colors[PyramidIndices[i + j]].a);
-      VECTOR4D V = SAspect * Vi * R * Scaling(0.5f, 0.5f, 0.5f) * Pyramid[PyramidIndices[i + j]];
+      VECTOR4D C = Colors[PyramidIndices[i + j]];
+      VECTOR4D V = SAspect * T * Pyramid[PyramidIndices[i + j]];
+      glColor4f(C.r, C.g, C.b, C.a);
       glVertex4f(V.x, V.y, V.z, V.w);
     }
   }
-
   glEnd();
 
   glutSwapBuffers();
 }
 
 void animateScene(int value) {
-  glutTimerFunc(REFRESH_MILISECS, animateScene, 0);
-  angle = 0.03f;
+  static float scale = 1.0f;
 
-  //R = Identity();
+  glutTimerFunc(REFRESH_MILISECS, animateScene, 0);
+
+  VECTOR4D Target = { 0.0f, 0.0f, 0.0f, 1.0f };
+  VECTOR4D Eye = { 3.0f, 3.0f, 3.0f, 1.0f };
+  VECTOR4D Up = { 0.0f, 0.0f, 1.0f, 0.0f };
+  MATRIX4D Vi = View(Eye, Target, Up);
+  MATRIX4D P = PerspectiveWidthHeightLH(1, 1, 1, 10);
+
   if (rotateX)
-    R = R * RotationX(angle);
+    R = R * RotationX(INCREMENT);
   if (rotateY)
-    R = R * RotationY(angle);
+    R = R * RotationY(INCREMENT);
   if (rotateZ)
-    R = R * RotationZ(angle);
+    R = R * RotationZ(INCREMENT);
+  if (scaleUp)
+    scale += INCREMENT;
+  if (scaleDown)
+    scale -= INCREMENT;
+
+  T = (P * Vi) * R * Scaling(scale, scale, scale);
+
   glutPostRedisplay();
 }
 
@@ -104,14 +101,33 @@ void keyHandler(unsigned char key, int x, int y) {
 #ifdef _DEBUG
   std::cout << key << " pressed" << std::endl;
 #endif
-  if (key == 27)
+  switch (key) {
+  case 27:
     glutLeaveMainLoop();
-  if (key == 'x' || key == 'X')
+    break;
+  case '+':
+    scaleUp = !scaleUp;
+    scaleDown = false;
+    break;
+  case '-':
+    scaleDown = !scaleDown;
+    scaleUp = false;
+    break;
+  case 'X':
+  case 'x':
     rotateX = !rotateX;
-  if (key == 'y' || key == 'Y')
+    break;
+  case 'Y':
+  case 'y':
     rotateY = !rotateY;
-  if (key == 'z' || key == 'Z')
+    break;
+  case 'Z':
+  case 'z':
     rotateZ = !rotateZ;
+    break;
+  default:
+    break;
+  }
   glutPostRedisplay();
 }
 
@@ -139,7 +155,7 @@ int main(int argc, char **argv) {
   if (!gameMode) {
     glutInitWindowPosition(startX, startY);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    glutCreateWindow("MSC GC 705080 - Demo 2 Matrices, Vectors");
+    glutCreateWindow("MSC GC 705080 - Demo 2 (3D, Matrices, Vectors)");
   }
 
   R = Identity();

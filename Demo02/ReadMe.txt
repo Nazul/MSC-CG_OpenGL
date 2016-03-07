@@ -38,3 +38,40 @@ AppWizard uses "TODO:" comments to indicate parts of the source code you
 should add to or customize.
 
 /////////////////////////////////////////////////////////////////////////////
+
+Project uses FreeGLUT and GLEW libraries that were downloaded from:
+http://freeglut.sourceforge.net/
+http://glew.sourceforge.net/
+
+And copied to solution folder. In order to use them, you need to configure the
+project properties as follows:
+
+// Base macro
+$(SolutionDir)
+
+// Project Properties, Configuration Properties, General, Project Defaults, Character Set (All Config), (All Platforms)
+Not Set
+
+// Project Properties, Configuration Properties, VC++ Directories, Include Directories (All Config), (All Platforms)
+$(SolutionDir)\GLEW1.13.0\include
+$(SolutionDir)\FreeGLUT3.0.0-2\include
+
+// Project Properties, Configuration Properties, C/C++, Additional Include Directories (All Config), (All Platforms)
+$(SolutionDir)\GLEW1.13.0\include
+$(SolutionDir)\FreeGLUT3.0.0-2\include
+
+// Project Properties, Configuration Properties, VC++ Directories, Library Directories (All Config), (Win32)
+$(SolutionDir)\FreeGLUT3.0.0-2\lib
+$(SolutionDir)\GLEW1.13.0\lib\Release\Win32
+
+// Project Properties, Configuration Properties, VC++ Directories, Library Directories (All Config), (x64)
+$(SolutionDir)\FreeGLUT3.0.0-2\lib\x64
+$(SolutionDir)\GLEW1.13.0\lib\Release\x64
+
+// Post-Build events (Win32)
+copy /Y "$(SolutionDir)\FreeGLUT3.0.0-2\bin\*.dll" "$(OutDir)"
+copy /Y "$(SolutionDir)\GLEW1.13.0\bin\Release\Win32\*.dll" "$(OutDir)"
+
+// Post-Build events (x64)
+copy /Y "$(SolutionDir)\FreeGLUT3.0.0-2\bin\x64\*.dll" "$(OutDir)"
+copy /Y "$(SolutionDir)\GLEW1.13.0\bin\Release\x64\*.dll" "$(OutDir)"

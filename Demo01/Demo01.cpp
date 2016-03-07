@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(100, 100);
   glutInitWindowSize(480, 480);
-  glutCreateWindow("MSC GC 705080 - My first OpenGL program");
+  glutCreateWindow("MSC GC 705080 - Demo01 (My first OpenGL program)");
 
   // register callbacks
   glutDisplayFunc(renderScene);
