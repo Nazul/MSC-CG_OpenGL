@@ -1,0 +1,13 @@
+﻿  stdafx.cpp
+  Demo04.cpp
+  Matrix4D.cpp
+  Mesh.cpp
+  MeshMathSurface.cpp
+  Generating code
+  All 247 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Demo04.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\x64\Release\Demo04.exe
+  C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\FreeGLUT3.0.0-2\bin\x64\freeglut.dll
+          1 file(s) copied.
+  C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\GLEW1.13.0\bin\Release\x64\glew32.dll
+          1 file(s) copied.
