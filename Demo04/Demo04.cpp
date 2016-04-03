@@ -83,8 +83,8 @@ VECTOR4D Dini(float u, float v) {
 void renderScene(void) {
   int sx = glutGet(GLUT_WINDOW_WIDTH);
   int sy = glutGet(GLUT_WINDOW_HEIGHT);
-  //MATRIX4D SAspect = Scaling((float)sy / sx, 1, 1);
-  MATRIX4D SAspect = Scaling(1, (float)sx / sy, 1);
+  MATRIX4D SAspect = Scaling((float)sy / sx, 1, 1);
+  //MATRIX4D SAspect = Scaling(1, (float)sx / sy, 1);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   if(bWireframe)

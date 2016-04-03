@@ -1,4 +1,5 @@
-﻿  Matrix4D.cpp
+﻿  stdafx.cpp
+  Matrix4D.cpp
   Demo02.cpp
   Generating Code...
   Demo02.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\Debug\Demo02.exe

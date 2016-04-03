@@ -1,9 +1,8 @@
-﻿  Homework01v2.cpp
+﻿  stdafx.cpp
+  Homework01v2.cpp
   Matrix4D.cpp
   Generating code
-  13 of 80 functions (16.3%) were compiled, the rest were copied from previous compilation.
-    6 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  All 79 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   Homework01v2.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\Release\Homework01v2.exe
   C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\FreeGLUT3.0.0-2\bin\freeglut.dll

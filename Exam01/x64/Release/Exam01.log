@@ -1,0 +1,11 @@
+﻿  Exam01.cpp
+  Generating code
+  17 of 257 functions ( 6.6%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Exam01.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\x64\Release\Exam01.exe
+  C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\FreeGLUT3.0.0-2\bin\x64\freeglut.dll
+          1 file(s) copied.
+  C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\GLEW1.13.0\bin\Release\x64\glew32.dll
+          1 file(s) copied.
