@@ -218,7 +218,7 @@ MATRIX4D FastInverse(MATRIX4D &M) {
 }
 
 VECTOR4D Lerp(VECTOR4D & A, VECTOR4D & B, float u) {
-  VECTOR4D U = {u, u, u, u};
+  VECTOR4D U = { u, u, u, u };
   return A + U * (B - A);
 }
 
@@ -239,19 +239,19 @@ bool PtInTriangleBarycentric(VECTOR4D &V0, VECTOR4D &V1, VECTOR4D &V2, VECTOR4D 
   float D, E, F;
   float invDet;
 
-  A = Dot( P - V0, V1 - V0);
-  B = Dot(V1 - V0, V1 - V0);
-  C = Dot(V2 - V0, V1 - V0);
-  D = Dot( P - V0, V2 - V0);
-  E = Dot(V1 - V0, V2 - V0);
-  F = Dot(V2 - V0, V2 - V0);
+  A = Dot((P - V0), (V1 - V0));
+  B = Dot((V1 - V0), (V1 - V0));
+  C = Dot((V2 - V0), (V1 - V0));
+  D = Dot((P - V0), (V2 - V0));
+  E = Dot((V1 - V0), (V2 - V0));
+  F = Dot((V2 - V0), (V2 - V0));
 
   invDet = 1.0f / (B * F - E * C);
   w1 = (F * A - C * D) * invDet;
   w2 = (B * D - E * A) * invDet;
   w0 = 1 - (w1 + w2);
 
-  return (w1 + w2) < 1 && w1 >= 0 && w2 >= 0;
+  return (w1 + w2) < 1 && w2 >= 0 && w1 >= 0;
 }
 
 //Matrix Inverse
@@ -392,19 +392,19 @@ void PlaneIntersect(VECTOR4D &RayOrigin, VECTOR4D &RayDir, VECTOR4D &Plane, floa
 bool RayCastOnTriangle(VECTOR4D &V0, VECTOR4D &V1, VECTOR4D &V2, VECTOR4D &RayOrigin, VECTOR4D &RayDir, VECTOR4D &Intersection) {
   VECTOR4D Plane, Offset;
   float n, d, u, w0, w1, w2;
-  
-  Plane = Cross3((V1 - V0), (V2, V0));
+
+  Plane = Cross3((V1 - V0), (V2 - V0));
   Plane = Normalize(Plane);
-  Plane.w = 0.0f;
+  Plane.w = -Dot(V0, Plane);
 
   PlaneIntersect(RayOrigin, RayDir, Plane, n, d);
-  if (fabs(d) < 0.0001f)
+  if (fabs(d) < EPSILON)
     return false;
 
   u = n / d;
   if (u < 0.0f)
     return false;
-  Offset = {RayDir.x * u, RayDir.y * u, RayDir.z * u, 0.0f};
+  Offset = { RayDir.x * u, RayDir.y * u, RayDir.z * u, 0.0f };
   Intersection = RayOrigin + Offset;
 
   return PtInTriangleBarycentric(V0, V1, V2, Intersection, w0, w1, w2);
@@ -412,7 +412,7 @@ bool RayCastOnTriangle(VECTOR4D &V0, VECTOR4D &V1, VECTOR4D &V2, VECTOR4D &RayOr
 
 void BuildRayFromPerspective(MATRIX4D &PV, float x, float y, VECTOR4D &RayOrigin, VECTOR4D &RayDir) {
   MATRIX4D InvPV;
-  VECTOR4D ScreenOrigin = {0.0f, 0.0f, 1.0f, 0.0f};
+  VECTOR4D ScreenOrigin = { 0.0f, 0.0f, 1.0f, 0.0f };
   VECTOR4D ScreenCursor = { x, y, 0.0f, 1.0f };
 
   Inverse(PV, InvPV); // Clipping space to world space

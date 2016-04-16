@@ -1,5 +1,6 @@
 ﻿  MeshMathSurface.cpp
   Mesh.cpp
+c:\users\mario_contreras\dropbox\msc\21. gc\code\msc-cg_opengl\demo05\mesh.cpp(73): warning C4018: '<': signed/unsigned mismatch
   Matrix4D.cpp
   Demo05.cpp
   Generating Code...

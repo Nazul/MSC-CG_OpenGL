@@ -45,6 +45,27 @@ void CMeshMathSurface::SetColor(VECTOR4D & A, VECTOR4D & B, VECTOR4D & C, VECTOR
 CMeshMathSurface::CMeshMathSurface() {
 }
 
+void CMeshMathSurface::BuildAnalyticSurface(unsigned long nVx, unsigned long nVy, float x0, float y0, float dx, float dy, float(*pFn)(float x, float y), VECTOR4D(*pFnDivergent)(float x, float y, float z)) {
+  float x, y = y0;
+
+  m_Indices.clear();
+  m_Vertices.clear();
+  m_nVx = nVx;
+  m_nVy = nVy;
+  m_Vertices.resize(m_nVx * m_nVy);
+  for (unsigned long j = 0; j < m_nVy; j++) {
+    x = x0;
+    for (unsigned long i = 0; i < m_nVx; i++) {
+      VECTOR4D P = { x, y, pFn(x, y), 1 };
+      m_Vertices[j * m_nVx + i].Position = P;
+      m_Vertices[j*m_nVx + i].Normal = pFnDivergent(x, y, P.z);
+      x += dx;
+    }
+    y += dy;
+  }
+  Tesselate();
+}
+
 void CMeshMathSurface::BuildAnalyticSurface(unsigned long nVx, unsigned long nVy, float x0, float y0, float dx, float dy, float(*pFn)(float x, float y)) {
   float x, y = y0;
 
@@ -56,7 +77,7 @@ void CMeshMathSurface::BuildAnalyticSurface(unsigned long nVx, unsigned long nVy
   for (unsigned long j = 0; j < m_nVy; j++) {
     x = x0;
     for (unsigned long i = 0; i < m_nVx; i++) {
-      VECTOR4D P = {x, y, pFn(x, y), 1};
+      VECTOR4D P = { x, y, pFn(x, y), 1 };
       m_Vertices[j * m_nVx + i].Position = P;
       x += dx;
     }

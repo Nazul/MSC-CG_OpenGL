@@ -1,0 +1,11 @@
+﻿  Mesh.cpp
+  Generating code
+  13 of 523 functions ( 2.5%) were compiled, the rest were copied from previous compilation.
+    12 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Demo06.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\Release\Demo06.exe
+  C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\FreeGLUT3.0.0-2\bin\freeglut.dll
+          1 file(s) copied.
+  C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\GLEW1.13.0\bin\Release\Win32\glew32.dll
+          1 file(s) copied.

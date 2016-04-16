@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include <math.h>
 #include <string>
+#include <algorithm>
 #include "GL\glew.h"
 #include "GL\glut.h"
 #include "GL\freeglut.h"
@@ -19,8 +20,8 @@
 #endif
 
 #define REFRESH_MILISECS 100
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
 #define INCREMENT 0.01f
 #define PI 3.141592f
 
@@ -41,6 +42,26 @@ CMeshMathSurface g_Flower;
 
 float SinCos(float x, float y) {
   return 0.3f * cosf(3.0f * x * PI) * sinf(3.0f * y * PI);
+}
+
+VECTOR4D SinCosNormal(float x, float y, float z) {
+  VECTOR4D N = { 0.3f * 3.0f * PI * sin(3.0f * x * PI) * sinf(3.0f * y * PI), -0.3f * 3.0f * PI * cosf(3.0f * x * PI) * cos(3.0f * y * PI), 1.0f, 0.0f };
+  N = Normalize(N);
+  return N;
+}
+
+CMesh::VERTEX MyFirstVertexShader(CMesh::VERTEX V) {
+  CMesh::VERTEX Out = V;
+  //VECTOR4D LightColor = { 1, 1, 1, 1 };
+  VECTOR4D LightColor = V.Color;
+  VECTOR4D LightDirection = { 0, 0, -1, 0 };
+  float ILambert = max(0.0f, -Dot(V.Normal, LightDirection));
+
+  Out.Color.r = ILambert * LightColor.r;
+  Out.Color.g = ILambert * LightColor.g;
+  Out.Color.b = ILambert * LightColor.b;
+  Out.Color.a = ILambert * LightColor.a;
+  return Out;
 }
 
 float x2y2(float x, float y) {
@@ -88,20 +109,42 @@ void renderScene(void) {
   int sy = glutGet(GLUT_WINDOW_HEIGHT);
   MATRIX4D SAspect = Scaling((float)sy / sx, 1, 1);
   //MATRIX4D SAspect = Scaling(1, (float)sx / sy, 1);
-  VECTOR4D rayOrigin, rayDir;
-  multimap<float, unsigned long> faces;
+  VECTOR4D worldRayOrigin, worldRayDir;
+  VECTOR4D modelRayOrigin, modelRayDir;
+  MATRIX4D W = Identity();
+  MATRIX4D InvW;
+  multimap<float, CMesh::INTERSECTIONINFO> faces;
+  MATRIX4D temp;
+  bool fill = false;
+
+  P = PerspectiveWidthHeightRH(0.5f, 0.5f, 1.0f, 10.0f);
+  //temp = SAspect * P * Vi;
+  temp = SAspect * T * Translation(0.0f, 0.0f, -1.0f);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  BuildRayFromPerspective(SAspect * P * Vi, mx, my, rayOrigin, rayDir);
-  bWireframe = g_EggCarton.RayCast(rayOrigin, rayDir, faces);
+  BuildRayFromPerspective(temp, mx, my, worldRayOrigin, worldRayDir);
+  Inverse(W, InvW);
+  modelRayOrigin = InvW * worldRayOrigin;
+  modelRayDir = InvW * worldRayDir;
+  fill = g_EggCarton.RayCast(modelRayOrigin, modelRayDir, faces);
+
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glBegin(GL_TRIANGLES);
+  g_EggCarton.Draw(SAspect * T * Translation(0.0f, 0.0f, -1.0f));
+  //g_EggCarton.Draw(temp * W);
+  glEnd();
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glBegin(GL_TRIANGLES);
+  if (fill)
+    g_EggCarton.Draw(SAspect * T * Translation(0.0f, 0.0f, -1.0f), faces.begin()->second.Face, 1);
+    //g_EggCarton.Draw(temp * W, faces.begin()->second.Face, 1);
+  glEnd();
 
   if (bWireframe)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   else
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
   glBegin(GL_TRIANGLES);
-  g_EggCarton.Draw(SAspect * T * Translation(0.0f, 0.0f, -1.0f));
   g_Plate.Draw(SAspect * T * Translation(0.0f, 0.0f, -0.1f));
   g_Sphere.Draw(SAspect * T * Translation(0.4f, 0.4f, 0.32f));
   g_Bananas.Draw(SAspect * T * Translation(0.45f, 0.45f, 0.48f));
@@ -190,10 +233,10 @@ void keyHandler(unsigned char key, int x, int y) {
   case '9':
     bForward = true;
     break;
-  //case 'W':
-  //case 'w':
-  //  bWireframe = !bWireframe;
-  //  break;
+    case 'W':
+    case 'w':
+      bWireframe = !bWireframe;
+      break;
   case 'X':
   case 'x':
     bRotateX = !bRotateX;
@@ -248,18 +291,13 @@ void onPassiveMotion(int x, int y) {
   std::cout << "X: " << x << " Y: " << y << std::endl;
 #endif
 
-  mx = -1 + 2 * (float)x / glutGet(GLUT_WINDOW_WIDTH);
-  my = 1 - 2 * (float)y / glutGet(GLUT_WINDOW_HEIGHT);
-}
+  mx = -1.0f + 2.0f * (float)x / glutGet(GLUT_WINDOW_WIDTH);
+  my = 1.0f - 2.0f * (float)y / glutGet(GLUT_WINDOW_HEIGHT);
 
-//void onMouse(int button, int state, int x, int y) {
-//#ifdef _DEBUG
-//  std::cout << "X: " << x << " Y: " << y << std::endl;
-//#endif
-//
-//  mx = -1 + 2 * (float)x / glutGet(GLUT_WINDOW_WIDTH);
-//  my = 1 - 2 * (float)y / glutGet(GLUT_WINDOW_HEIGHT);
-//}
+#ifdef _DEBUG
+  std::cout << "mx: " << mx << " my: " << my << std::endl;
+#endif
+}
 
 
 int main(int argc, char **argv) {
@@ -274,10 +312,10 @@ int main(int argc, char **argv) {
   VECTOR4D w = { 1, 1, 1, 1 };
   VECTOR4D y = { 1, 1, 0, 1 };
 
-  VECTOR4D V1 = { 0,  1, 0, 1};
-  VECTOR4D V2 = { 1, -1, 0, 1};
-  VECTOR4D V3 = {-1, -1, 0, 1};
-  VECTOR4D P1 = {0, -1.1f, 0, 1};
+  VECTOR4D V1 = { 0,  1, 0, 1 };
+  VECTOR4D V2 = { 1, -1, 0, 1 };
+  VECTOR4D V3 = { -1, -1, 0, 1 };
+  VECTOR4D P1 = { 0, -1.1f, 0, 1 };
 
   // Init GLUT and create Window
   glutInit(&argc, argv);
@@ -307,8 +345,9 @@ int main(int argc, char **argv) {
   R = Identity();
 
   // Create surfaces
-  g_EggCarton.BuildAnalyticSurface(30, 30, -1, -1, 2.0f / (30 - 1), 2.0f / (30 - 1), SinCos);
+  g_EggCarton.BuildAnalyticSurface(32, 32, -1, -1, 2.0f / (32 - 1), 2.0f / (32 - 1), SinCos, SinCosNormal);
   g_EggCarton.SetColor(r, g, b, w);
+  g_EggCarton.VertexShade(MyFirstVertexShader);
   g_Plate.BuildAnalyticSurface(40, 40, -1, -1, 2.0f / (40 - 1), 2.0f / (40 - 1), x2y2);
   g_Plate.SetColor(r, g, b, w);
   g_Sphere.BuildParametricSurface(30, 30, -1, -1, 1.0f / (30 - 1), 1.0f / (30 - 1), Sphere);
@@ -327,7 +366,6 @@ int main(int argc, char **argv) {
 
   // Enter GLUT event processing cycle
   glEnable(GL_DEPTH_TEST);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glutMainLoop();
 
   return 0;
