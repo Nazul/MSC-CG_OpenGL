@@ -1,0 +1,11 @@
+﻿  stdafx.cpp
+  FinalProject.cpp
+  Matrix4D.cpp
+  Mesh.cpp
+  MeshMathSurface.cpp
+  Terrain.cpp
+  World.cpp
+  Generating code
+  All 316 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  FinalProject.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\x64\Release\FinalProject.exe

@@ -1,5 +1,5 @@
 ========================================================================
-    CONSOLE APPLICATION : Demo05 Project Overview
+    CONSOLE APPLICATION : Demo06 Project Overview
 ========================================================================
 
 AppWizard has created this Demo05 application for you.

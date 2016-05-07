@@ -1,8 +1,5 @@
-﻿  Exam01.cpp
-  Generating code
-  1 of 260 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    6 functions had inline decision re-evaluated but remain unchanged
+﻿  Generating code
+  All 260 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   Exam01.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\Release\Exam01.exe
   C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\FreeGLUT3.0.0-2\bin\freeglut.dll

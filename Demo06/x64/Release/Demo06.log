@@ -1,8 +1,6 @@
-﻿  Mesh.cpp
+﻿  Demo06.cpp
   Generating code
-  41 of 518 functions ( 7.9%) were compiled, the rest were copied from previous compilation.
-    12 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+  All 518 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   Demo06.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\x64\Release\Demo06.exe
   C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\FreeGLUT3.0.0-2\bin\x64\freeglut.dll

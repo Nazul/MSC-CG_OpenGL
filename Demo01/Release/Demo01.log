@@ -1,6 +1,4 @@
-﻿  stdafx.cpp
-  Demo01.cpp
-  Generating code
+﻿  Generating code
   All 5 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   Demo01.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\Release\Demo01.exe

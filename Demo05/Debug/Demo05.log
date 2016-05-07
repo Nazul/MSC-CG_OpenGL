@@ -1,10 +1,4 @@
-﻿  MeshMathSurface.cpp
-  Mesh.cpp
-c:\users\mario_contreras\dropbox\msc\21. gc\code\msc-cg_opengl\demo05\mesh.cpp(73): warning C4018: '<': signed/unsigned mismatch
-  Matrix4D.cpp
-  Demo05.cpp
-  Generating Code...
-  Demo05.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\Debug\Demo05.exe
+﻿  Demo05.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\Debug\Demo05.exe
   C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\FreeGLUT3.0.0-2\bin\freeglut.dll
           1 file(s) copied.
   C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\GLEW1.13.0\bin\Release\Win32\glew32.dll
