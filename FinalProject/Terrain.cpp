@@ -1,9 +1,23 @@
+//**********************************************************
+// ITESO - Master's Degree in Computer Systems
+// Computer Graphics
+// Final Project - Basic Map Editor
+//
+// Mario Contreras (705080)
+//
+//*********************************************************
 #include "stdafx.h"
 #include "Terrain.h"
 #include <GL\GL.h>
 #include <GL\GLU.h>
 
 #define PI 3.141592f
+
+VECTOR4D SELECTED_LAND_COLOR = { 0.8f, 0.8f, 0.0f, 0.9f };
+VECTOR4D WIREFRAME_LAND_COLOR = { 0.0f, 1.0f, 0.0f, 1.0f };
+VECTOR4D LAND_COLOR = { 0.0f, 0.5f, 0.0f, 0.8f };
+VECTOR4D WATER_COLOR = { 0.0f, 0.0f, 1.0f, 0.35f };
+VECTOR4D SELECTED_CENTER_COLOR = { 1.0f, 0.0f, 0.0f, 0.9f };
 
 
 float plane(float x, float y) {
@@ -23,47 +37,30 @@ CTerrain::CTerrain(unsigned long nVx, unsigned long nVy, float x0, float y0, flo
 }
 
 void CTerrain::Draw() {
-  VECTOR4D worldRayOrigin, worldRayDir;
-  VECTOR4D modelRayOrigin, modelRayDir;
-  MATRIX4D InvW, Land, Water;
-  multimap<float, CMesh::INTERSECTIONINFO> faces;
-  BOOL fill = FALSE;
-  VECTOR4D g = { 0.0f, 1.0f, 0.0f, 1.0f };
-  VECTOR4D b = { 0.0f, 0.0f, 1.0f, 0.75f };
+  MATRIX4D Land, LandWF, Water;
 
   Land = *S * *P * *V * TL;
+  LandWF = *S * *P * *V * TL * Translation(0.0f, 0.0f, 0.002f);
   Water = *S * *P * *V * TW;
-
-  BuildRayFromPerspective(Land, x, y, worldRayOrigin, worldRayDir);
-  Inverse(Identity(), InvW);
-  modelRayOrigin = InvW * worldRayOrigin;
-  modelRayDir = InvW * worldRayDir;
-  fill = landMesh.RayCast(modelRayOrigin, modelRayDir, faces);
-
-  // Water
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  glBegin(GL_TRIANGLES);
-  waterMesh.SetColor(b, b, b, b);
-  waterMesh.Draw(Water);
-  glEnd();
-
-  // Land (all)
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  glBegin(GL_TRIANGLES);
-  landMesh.SetColor(g, g, g, g);
-  landMesh.Draw(Land);
-  glEnd();
 
   // Land (selection)
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glBegin(GL_TRIANGLES);
-  if (fill) {
-    int center = faces.begin()->second.Face;
+  if (faceSelected) {
+    int center = selectedFace;
     int start = 0;
 
     if (center % 2 == 1)
       center--;
+    landMesh.SetColor(SELECTED_LAND_COLOR, SELECTED_LAND_COLOR, SELECTED_LAND_COLOR, SELECTED_LAND_COLOR);
     switch (size) {
+    case AreaSize::Single:
+    {
+
+      landMesh.SetColor(SELECTED_CENTER_COLOR, SELECTED_CENTER_COLOR, SELECTED_CENTER_COLOR, SELECTED_CENTER_COLOR);
+      landMesh.Draw(Land, center, 2);
+    }
+    break;
     case AreaSize::Small:
       start = center - h * 2;
       landMesh.Draw(Land, start < 0 ? 0 : start, 6);
@@ -103,31 +100,57 @@ void CTerrain::Draw() {
     }
   }
   glEnd();
+
+  // Land (all - wireframe)
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glBegin(GL_TRIANGLES);
+  landMesh.SetColor(WIREFRAME_LAND_COLOR, WIREFRAME_LAND_COLOR, WIREFRAME_LAND_COLOR, WIREFRAME_LAND_COLOR);
+  landMesh.Draw(LandWF);
+  glEnd();
+
+  // Land (all - solid)
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glBegin(GL_TRIANGLES);
+  landMesh.SetColor(LAND_COLOR, LAND_COLOR, LAND_COLOR, LAND_COLOR);
+  landMesh.Draw(Land);
+  glEnd();
+
+  // Water
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glBegin(GL_TRIANGLES);
+  waterMesh.SetColor(WATER_COLOR, WATER_COLOR, WATER_COLOR, WATER_COLOR);
+  waterMesh.Draw(Water);
+  glEnd();
 }
 
 void CTerrain::MouseMove(float x, float y) {
-  this->x = x;
-  this->y = y;
-}
-
-void CTerrain::Press() {
   VECTOR4D worldRayOrigin, worldRayDir;
   VECTOR4D modelRayOrigin, modelRayDir;
-  MATRIX4D InvW, Land, Water;
+  MATRIX4D InvW, Land;
   multimap<float, CMesh::INTERSECTIONINFO> faces;
-  BOOL fill = FALSE;
+
+  this->x = x;
+  this->y = y;
 
   Land = *S * *P * *V * TL;
-  Water = *S * *P * *V * TW;
 
   BuildRayFromPerspective(Land, x, y, worldRayOrigin, worldRayDir);
   Inverse(Identity(), InvW);
   modelRayOrigin = InvW * worldRayOrigin;
   modelRayDir = InvW * worldRayDir;
-  fill = landMesh.RayCast(modelRayOrigin, modelRayDir, faces);
+  faceSelected = landMesh.RayCast(modelRayOrigin, modelRayDir, faces);
 
-  if (fill) {
-    int center = faces.begin()->second.Face;
+  if (faceSelected) {
+    selectedFace = faces.begin()->second.Face;
+    //selectedFaceLocation = Land * landMesh.m_Vertices[landMesh.m_Indices[selectedFace]].Position;
+    //selectedFaceLocation = landMesh.m_Vertices[landMesh.m_Indices[selectedFace]].Position;
+    selectedFaceLocation = faces.begin()->second.LocalPosition;
+  }
+}
+
+void CTerrain::Press() {
+  if (faceSelected) {
+    int center = selectedFace;
     int start = 0;
 
     if (center % 2 == 1)
@@ -174,23 +197,8 @@ void CTerrain::Press() {
 }
 
 void CTerrain::Raise() {
-  VECTOR4D worldRayOrigin, worldRayDir;
-  VECTOR4D modelRayOrigin, modelRayDir;
-  MATRIX4D InvW, Land, Water;
-  multimap<float, CMesh::INTERSECTIONINFO> faces;
-  BOOL fill = FALSE;
-
-  Land = *S * *P * *V * TL;
-  Water = *S * *P * *V * TW;
-
-  BuildRayFromPerspective(Land, x, y, worldRayOrigin, worldRayDir);
-  Inverse(Identity(), InvW);
-  modelRayOrigin = InvW * worldRayOrigin;
-  modelRayDir = InvW * worldRayDir;
-  fill = landMesh.RayCast(modelRayOrigin, modelRayDir, faces);
-
-  if (fill) {
-    int center = faces.begin()->second.Face;
+  if (faceSelected) {
+    int center = selectedFace;
     int start = 0;
 
     if (center % 2 == 1)
@@ -238,6 +246,12 @@ void CTerrain::Raise() {
 
 void CTerrain::SetArea(AreaSize size) {
   this->size = size;
+}
+
+BOOL CTerrain::GetSelectedFaceLocation(VECTOR4D& location) {
+  if (faceSelected)
+    location = selectedFaceLocation;
+  return faceSelected;
 }
 
 CTerrain::~CTerrain() {

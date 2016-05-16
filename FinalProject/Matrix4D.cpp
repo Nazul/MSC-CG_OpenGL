@@ -1,7 +1,7 @@
 //**********************************************************
 // ITESO - Master's Degree in Computer Systems
 // Computer Graphics
-// Demo 07 - Vertex selection (sphere magnetic field)
+// Final Project - Basic Map Editor
 //
 // Mario Contreras (705080)
 //

@@ -1,12 +1,20 @@
-// FinalProject.cpp : Defines the entry point for the application.
+//**********************************************************
+// ITESO - Master's Degree in Computer Systems
+// Computer Graphics
+// Final Project - Basic Map Editor
 //
-
+// Mario Contreras (705080)
+//
+//*********************************************************
+// FinalProject.cpp : Defines the entry point for the application.
+//*********************************************************
 #include "stdafx.h"
 #include "FinalProject.h"
 #include "World.h"
 
 #define MAX_LOADSTRING 100
 #define IDT_TIMER1 1 
+#define REFRESH_INTERVAL 200
 
 
 // Global Variables:
@@ -18,6 +26,8 @@ HCURSOR hShovelCursor;
 HWND sb;
 BOOL bPressed = FALSE;
 BOOL bRaised = FALSE;
+Operation operation = Operation::Terrain;
+ObjectType otype = ObjectType::Tree;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -114,7 +124,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
   // Set timer for window refresh while idle
   SetTimer(hWnd,      // handle to main window 
     IDT_TIMER1,       // timer identifier 
-    300,              //  interval (miliseconds)
+    REFRESH_INTERVAL, //  interval (miliseconds)
     (TIMERPROC)NULL); // no timer callback 
 
   return TRUE;
@@ -139,43 +149,177 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
     switch (wmId) {
     case ID_SIZE_SMALL:
     {
-      HMENU hMenu = GetMenu(hWnd);
-      MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
-      mii.fMask = MIIM_STATE;
-      mii.fState = MFS_CHECKED;
-      SetMenuItemInfo(hMenu, ID_SIZE_SMALL, FALSE, &mii);
-      mii.fState = MFS_UNCHECKED;
-      SetMenuItemInfo(hMenu, ID_SIZE_MEDIUM, FALSE, &mii);
-      SetMenuItemInfo(hMenu, ID_SIZE_LARGE, FALSE, &mii);
-      world->SetAreaSize(AreaSize::Small);
+      if (operation == Operation::Terrain) {
+        HMENU hMenu = GetMenu(hWnd);
+        MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+        mii.fMask = MIIM_STATE;
+        mii.fState = MFS_CHECKED;
+        SetMenuItemInfo(hMenu, ID_SIZE_SMALL, FALSE, &mii);
+        mii.fState = MFS_UNCHECKED;
+        SetMenuItemInfo(hMenu, ID_SIZE_MEDIUM, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_SIZE_LARGE, FALSE, &mii);
+        world->SetAreaSize(AreaSize::Small);
+      }
     }
     break;
     case ID_SIZE_MEDIUM:
     {
-      HMENU hMenu = GetMenu(hWnd);
-      MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
-      mii.fMask = MIIM_STATE;
-      mii.fState = MFS_CHECKED;
-      SetMenuItemInfo(hMenu, ID_SIZE_MEDIUM, FALSE, &mii);
-      mii.fState = MFS_UNCHECKED;
-      SetMenuItemInfo(hMenu, ID_SIZE_SMALL, FALSE, &mii);
-      SetMenuItemInfo(hMenu, ID_SIZE_LARGE, FALSE, &mii);
-      world->SetAreaSize(AreaSize::Medium);
+      if (operation == Operation::Terrain) {
+        HMENU hMenu = GetMenu(hWnd);
+        MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+        mii.fMask = MIIM_STATE;
+        mii.fState = MFS_CHECKED;
+        SetMenuItemInfo(hMenu, ID_SIZE_MEDIUM, FALSE, &mii);
+        mii.fState = MFS_UNCHECKED;
+        SetMenuItemInfo(hMenu, ID_SIZE_SMALL, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_SIZE_LARGE, FALSE, &mii);
+        world->SetAreaSize(AreaSize::Medium);
+      }
     }
     break;
     case ID_SIZE_LARGE:
+    {
+      if (operation == Operation::Terrain) {
+        HMENU hMenu = GetMenu(hWnd);
+        MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+        mii.fMask = MIIM_STATE;
+        mii.fState = MFS_CHECKED;
+        SetMenuItemInfo(hMenu, ID_SIZE_LARGE, FALSE, &mii);
+        mii.fState = MFS_UNCHECKED;
+        SetMenuItemInfo(hMenu, ID_SIZE_SMALL, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_SIZE_MEDIUM, FALSE, &mii);
+        world->SetAreaSize(AreaSize::Large);
+      }
+    }
+    break;
+    case ID_OPERATION_TERRAIN:
     {
       HMENU hMenu = GetMenu(hWnd);
       MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
       mii.fMask = MIIM_STATE;
       mii.fState = MFS_CHECKED;
-      SetMenuItemInfo(hMenu, ID_SIZE_LARGE, FALSE, &mii);
+      SetMenuItemInfo(hMenu, ID_OPERATION_TERRAIN, FALSE, &mii);
       mii.fState = MFS_UNCHECKED;
-      SetMenuItemInfo(hMenu, ID_SIZE_SMALL, FALSE, &mii);
-      SetMenuItemInfo(hMenu, ID_SIZE_MEDIUM, FALSE, &mii);
-      world->SetAreaSize(AreaSize::Large);
+      SetMenuItemInfo(hMenu, ID_OPERATION_FLOWER, FALSE, &mii);
+      SetMenuItemInfo(hMenu, ID_OPERATION_IMPORTEDOBJECT, FALSE, &mii);
+      operation = Operation::Terrain;
+
+      GetMenuItemInfo(hMenu, ID_SIZE_SMALL, FALSE, &mii);
+      if (mii.fState == MFS_CHECKED)
+        world->SetAreaSize(AreaSize::Small);
+      GetMenuItemInfo(hMenu, ID_SIZE_MEDIUM, FALSE, &mii);
+      if (mii.fState == MFS_CHECKED)
+        world->SetAreaSize(AreaSize::Medium);
+      GetMenuItemInfo(hMenu, ID_SIZE_LARGE, FALSE, &mii);
+      if (mii.fState == MFS_CHECKED)
+        world->SetAreaSize(AreaSize::Large);
     }
     break;
+    case ID_OPERATION_FLOWER:
+    {
+      HMENU hMenu = GetMenu(hWnd);
+      MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+      mii.fMask = MIIM_STATE;
+      mii.fState = MFS_CHECKED;
+      SetMenuItemInfo(hMenu, ID_OPERATION_FLOWER, FALSE, &mii);
+      mii.fState = MFS_UNCHECKED;
+      SetMenuItemInfo(hMenu, ID_OPERATION_TERRAIN, FALSE, &mii);
+      SetMenuItemInfo(hMenu, ID_OPERATION_IMPORTEDOBJECT, FALSE, &mii);
+      operation = Operation::Flower;
+      world->SetAreaSize(AreaSize::Single);
+    }
+    break;
+    case ID_OPERATION_IMPORTEDOBJECT:
+    {
+      HMENU hMenu = GetMenu(hWnd);
+      MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+      mii.fMask = MIIM_STATE;
+      mii.fState = MFS_CHECKED;
+      SetMenuItemInfo(hMenu, ID_OPERATION_IMPORTEDOBJECT, FALSE, &mii);
+      mii.fState = MFS_UNCHECKED;
+      SetMenuItemInfo(hMenu, ID_OPERATION_FLOWER, FALSE, &mii);
+      SetMenuItemInfo(hMenu, ID_OPERATION_TERRAIN, FALSE, &mii);
+      operation = Operation::ImportedObject;
+      world->SetAreaSize(AreaSize::Single);
+
+      GetMenuItemInfo(hMenu, ID_OBJECT_TREE, FALSE, &mii);
+      if (mii.fState == MFS_CHECKED)
+        otype = ObjectType::Tree;
+      GetMenuItemInfo(hMenu, ID_OBJECT_BEAR, FALSE, &mii);
+      if (mii.fState == MFS_CHECKED)
+        otype = ObjectType::Bear;
+      GetMenuItemInfo(hMenu, ID_OBJECT_SUZANNE, FALSE, &mii);
+      if (mii.fState == MFS_CHECKED)
+        otype = ObjectType::Suzanne;
+      GetMenuItemInfo(hMenu, ID_OBJECT_WOOD, FALSE, &mii);
+      if (mii.fState == MFS_CHECKED)
+        otype = ObjectType::Wood;
+    }
+    break;
+    case ID_OBJECT_TREE:
+      if (operation == Operation::ImportedObject) {
+        HMENU hMenu = GetMenu(hWnd);
+        MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+        mii.fMask = MIIM_STATE;
+        mii.fState = MFS_CHECKED;
+        SetMenuItemInfo(hMenu, ID_OBJECT_TREE, FALSE, &mii);
+        mii.fState = MFS_UNCHECKED;
+        SetMenuItemInfo(hMenu, ID_OBJECT_BEAR, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_OBJECT_SUZANNE, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_OBJECT_WOOD, FALSE, &mii);
+        operation = Operation::ImportedObject;
+        world->SetAreaSize(AreaSize::Single);
+        otype = ObjectType::Tree;
+      }
+      break;
+    case ID_OBJECT_BEAR:
+      if (operation == Operation::ImportedObject) {
+        HMENU hMenu = GetMenu(hWnd);
+        MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+        mii.fMask = MIIM_STATE;
+        mii.fState = MFS_CHECKED;
+        SetMenuItemInfo(hMenu, ID_OBJECT_BEAR, FALSE, &mii);
+        mii.fState = MFS_UNCHECKED;
+        SetMenuItemInfo(hMenu, ID_OBJECT_TREE, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_OBJECT_SUZANNE, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_OBJECT_WOOD, FALSE, &mii);
+        operation = Operation::ImportedObject;
+        world->SetAreaSize(AreaSize::Single);
+        otype = ObjectType::Bear;
+      }
+      break;
+    case ID_OBJECT_SUZANNE:
+      if (operation == Operation::ImportedObject) {
+        HMENU hMenu = GetMenu(hWnd);
+        MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+        mii.fMask = MIIM_STATE;
+        mii.fState = MFS_CHECKED;
+        SetMenuItemInfo(hMenu, ID_OBJECT_SUZANNE, FALSE, &mii);
+        mii.fState = MFS_UNCHECKED;
+        SetMenuItemInfo(hMenu, ID_OBJECT_BEAR, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_OBJECT_TREE, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_OBJECT_WOOD, FALSE, &mii);
+        operation = Operation::ImportedObject;
+        world->SetAreaSize(AreaSize::Single);
+        otype = ObjectType::Suzanne;
+      }
+      break;
+    case ID_OBJECT_WOOD:
+      if (operation == Operation::ImportedObject) {
+        HMENU hMenu = GetMenu(hWnd);
+        MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+        mii.fMask = MIIM_STATE;
+        mii.fState = MFS_CHECKED;
+        SetMenuItemInfo(hMenu, ID_OBJECT_WOOD, FALSE, &mii);
+        mii.fState = MFS_UNCHECKED;
+        SetMenuItemInfo(hMenu, ID_OBJECT_BEAR, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_OBJECT_SUZANNE, FALSE, &mii);
+        SetMenuItemInfo(hMenu, ID_OBJECT_TREE, FALSE, &mii);
+        operation = Operation::ImportedObject;
+        world->SetAreaSize(AreaSize::Single);
+        otype = ObjectType::Wood;
+      }
+      break;
     case IDM_ABOUT:
       DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
       break;
@@ -223,6 +367,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
       if (world != NULL) {
         GetClientRect(hWnd, &rect);
         world->Resize(rect.left + rect.right, rect.top + rect.bottom);
+        if (bPressed && operation == Operation::Terrain)
+          world->Press();
+        if (bRaised && operation == Operation::Terrain)
+          world->Raise();
         world->Display();
       }
       EndPaint(hWnd, &ps);
@@ -233,25 +381,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
     break;
   case WM_MOUSEMOVE:
   {
+    PAINTSTRUCT ps;
     POINT curpos;
+    HDC hdc = BeginPaint(hWnd, &ps);
+    RECT rect;
+
     GetCursorPos(&curpos);
     ScreenToClient(hWnd, &curpos);
     world->MouseMove(curpos.x, curpos.y);
-    if (bPressed)
+    if (bPressed && operation == Operation::Terrain)
       world->Press();
-    if (bRaised)
+    if (bRaised && operation == Operation::Terrain)
       world->Raise();
+    if (world != NULL) {
+      GetClientRect(hWnd, &rect);
+      world->Resize(rect.left + rect.right, rect.top + rect.bottom);
+      world->Display();
+    }
+    EndPaint(hWnd, &ps);
   }
   break;
   case WM_LBUTTONDOWN:
-    world->Press();
+    if (operation == Operation::Terrain)
+      world->Press();
+    else if (operation == Operation::Flower)
+      world->AddFlower();
+    else
+      world->AddImportedObject(otype);
     bPressed = TRUE;
     break;
   case WM_LBUTTONUP:
     bPressed = FALSE;
     break;
   case WM_RBUTTONDOWN:
-    world->Raise();
+    if (operation == Operation::Terrain)
+      world->Raise();
     bRaised = TRUE;
     break;
   case WM_RBUTTONUP:

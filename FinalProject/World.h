@@ -1,7 +1,20 @@
+//**********************************************************
+// ITESO - Master's Degree in Computer Systems
+// Computer Graphics
+// Final Project - Basic Map Editor
+//
+// Mario Contreras (705080)
+//
+//*********************************************************
 #pragma once
 
 #include "Matrix4D.h"
 #include "Terrain.h"
+#include "Flower.h"
+#include "ImportedObject.h"
+
+enum class Operation { Terrain, Flower, ImportedObject };
+
 
 class CWorld {
 private:
@@ -11,9 +24,13 @@ private:
   MATRIX4D SAspect;
   MATRIX4D P;
   MATRIX4D V;
-  void DrawAxes(float length);
   BOOL SetupPixelFormat();
   CTerrain* terrain;
+  CFlower* flowers;
+  CImportedObject* trees;
+  CImportedObject* suzannes;
+  CImportedObject* bears;
+  CImportedObject* woods;
 protected:
   int w, h;
   HWND hWnd;
@@ -27,6 +44,10 @@ public:
   void MouseMove(int x, int y);
   void Press();
   void Raise();
+  void AddFlower();
+  void DeleteFlower();
+  void AddImportedObject(ObjectType type);
+  void DeleteImportedObject();
   void SetAreaSize(AreaSize size);
   ~CWorld();
 };

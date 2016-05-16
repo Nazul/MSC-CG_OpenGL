@@ -1,5 +1,8 @@
-﻿  Generating code
-  All 260 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+﻿  Matrix4D.cpp
+  Generating code
+  0 of 260 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    7 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Exam01.vcxproj -> C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\Release\Exam01.exe
   C:\Users\Mario_Contreras\Dropbox\MSC\21. GC\Code\MSC-CG_OpenGL\\FreeGLUT3.0.0-2\bin\freeglut.dll

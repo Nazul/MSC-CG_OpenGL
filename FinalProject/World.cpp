@@ -1,32 +1,18 @@
+//**********************************************************
+// ITESO - Master's Degree in Computer Systems
+// Computer Graphics
+// Final Project - Basic Map Editor
+//
+// Mario Contreras (705080)
+//
+//*********************************************************
 #include "stdafx.h"
 #include "World.h"
 #include <GL\GL.h>
 #include <GL\GLU.h>
 #include "Mesh.h"
+#include "ImportedObject.h"
 
-
-void CWorld::DrawAxes(float length) {
-  glPushAttrib(GL_POLYGON_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
-
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  glDisable(GL_LIGHTING);
-
-  glBegin(GL_LINES);
-  glColor3f(1, 0, 0);
-  glVertex3f(0, 0, 0);
-  glVertex3f(length, 0, 0);
-
-  glColor3f(0, 1, 0);
-  glVertex3f(0, 0, 0);
-  glVertex3f(0, length, 0);
-
-  glColor3f(0, 0, 1);
-  glVertex3f(0, 0, 0);
-  glVertex3f(0, 0, length);
-  glEnd();
-
-  glPopAttrib();
-}
 
 BOOL CWorld::SetupPixelFormat() {
   static PIXELFORMATDESCRIPTOR pfd =
@@ -53,12 +39,10 @@ BOOL CWorld::SetupPixelFormat() {
   int pixelformat;
 
   if ((pixelformat = ChoosePixelFormat(m_pDC, &pfd)) == 0) {
-    //MessageBox(L"ChoosePixelFormat failed");
     return FALSE;
   }
 
   if (SetPixelFormat(m_pDC, pixelformat, &pfd) == FALSE) {
-    //MessageBox(L"SetPixelFormat failed");
     return FALSE;
   }
 
@@ -91,6 +75,9 @@ void CWorld::Init() {
   GetClientRect(hWnd, &rect);
   glClearDepth(1.0f);
   glEnable(GL_DEPTH_TEST);
+  // Enable blending
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   if (rect.bottom)
     fAspect = (GLfloat)rect.right / rect.bottom;
@@ -113,6 +100,13 @@ void CWorld::Init() {
 
   // Objects
   terrain = new CTerrain(64, 64, -1, -1, 2.0f / (64 - 1), 2.0f / (64 - 1), &V, &P, &SAspect);
+  terrain->SetArea(AreaSize::Small);
+  flowers = new CFlower(100, 30, -1, -1, 1.0f / (10 - 1), 1.0f / (10 - 1), &V, &P, &SAspect);
+  // Imported Objects
+  trees = new CImportedObject(ObjectType::Tree, &V, &P, &SAspect);
+  bears = new CImportedObject(ObjectType::Bear, &V, &P, &SAspect);
+  woods = new CImportedObject(ObjectType::Wood, &V, &P, &SAspect);
+  suzannes = new CImportedObject(ObjectType::Suzanne, &V, &P, &SAspect);
 }
 
 CWorld* CWorld::CreateWorld(HWND hWnd) {
@@ -132,7 +126,8 @@ void CWorld::Display() {
   bBusy = TRUE;
 
   //// clear the window
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  //glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClearColor(0.529411765f, 0.807843137f, 0.980392157f, 0.5f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Load identity
@@ -140,6 +135,11 @@ void CWorld::Display() {
   glLoadIdentity();
 
   terrain->Draw();
+  flowers->Draw();
+  trees->Draw();
+  bears->Draw();
+  woods->Draw();
+  suzannes->Draw();
 
   // show the rendering on the screen
   SwapBuffers(wglGetCurrentDC());
@@ -165,6 +165,40 @@ void CWorld::Press() {
 
 void CWorld::Raise() {
   terrain->Raise();
+}
+
+void CWorld::AddFlower() {
+  VECTOR4D V;
+
+  if (terrain->GetSelectedFaceLocation(V))
+    flowers->Add(V);
+}
+
+void CWorld::DeleteFlower() {
+}
+
+void CWorld::AddImportedObject(ObjectType type) {
+  VECTOR4D V;
+
+  if (terrain->GetSelectedFaceLocation(V)) {
+    switch (type) {
+    case ObjectType::Tree:
+      trees->Add(V);
+      break;
+    case ObjectType::Suzanne:
+      suzannes->Add(V);
+      break;
+    case ObjectType::Bear:
+      bears->Add(V);
+      break;
+    case ObjectType::Wood:
+      woods->Add(V);
+      break;
+    }
+  }
+}
+
+void CWorld::DeleteImportedObject() {
 }
 
 void CWorld::SetAreaSize(AreaSize size) {
